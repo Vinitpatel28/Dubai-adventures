@@ -1,0 +1,25 @@
+{
+  "name": "Dubai Adventures - Premium Desert Experiences",
+  "short_name": "Dubai Adventures",
+  "description": "Book premium desert safaris, ATV rides, yacht cruises and outdoor experiences in Dubai.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050403",
+  "theme_color": "#D4962A",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["travel", "tourism", "entertainment"],
+  "lang": "en",
+  "dir": "ltr"
+}

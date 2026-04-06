@@ -1,0 +1,558 @@
+/* Fonts loaded via next/font in layout.tsx — no render-blocking @import needed */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════════ */
+:root {
+  --fd: var(--fd, 'Cormorant Garamond', Georgia, serif);
+  --fb: var(--fb, 'Outfit', system-ui, sans-serif);
+
+  /* Gold palette */
+  --g50: #FDF6E3;
+  --g100: #F5E0A0;
+  --g200: #ECC86A;
+  --g300: #D4962A;
+  --g400: #B87620;
+  --g500: #965C14;
+  --g600: #6E420C;
+
+  /* Surface palette - ultra dark warm blacks */
+  --s0: #070706;
+  --s1: #0D0C09;
+  --s2: #14120D;
+  --s3: #1C1912;
+  --s4: #242017;
+  --s5: #2D281A;
+
+  /* Text (Boosted for Visibility) */
+  --t1: rgba(255, 255, 255, 0.98);
+  --t2: rgba(255, 255, 255, 0.82);
+  --t3: rgba(255, 255, 255, 0.65);
+  --t4: rgba(255, 255, 255, 0.45);
+  --t5: rgba(255, 255, 255, 0.25);
+
+  /* Borders */
+  --bw1: rgba(255, 255, 255, 0.12);
+  --bw2: rgba(255, 255, 255, 0.20);
+  --bw3: rgba(255, 255, 255, 0.32);
+  --bw4: rgba(255, 255, 255, 0.05);
+  --bw5: rgba(255, 255, 255, 0.02);
+  --overlay-opacity: 0.85;
+  --bg1: rgba(212, 150, 42, 0.25);
+  --bg2: rgba(212, 150, 42, 0.45);
+  --bg3: rgba(212, 150, 42, 0.70);
+
+  /* Shadows */
+  --shc: 0 2px 16px rgba(0, 0, 0, 0.5), 0 1px 4px rgba(0, 0, 0, 0.4);
+  --shh: 0 32px 80px rgba(0, 0, 0, 0.75), 0 12px 28px rgba(0, 0, 0, 0.5);
+  --shg: 0 0 40px rgba(212, 150, 42, 0.28), 0 4px 16px rgba(212, 150, 42, 0.18);
+  --calendar-invert: invert(1);
+  --nav-glass: rgba(0, 0, 0, 0.65);
+  --glass: rgba(13, 12, 9, 0.75);
+}
+
+/* ═══════════════════════════════════════════════
+   PREMIUM UTILITIES
+   ═══════════════════════════════════════════════ */
+.gold-text {
+  background: linear-gradient(135deg, #ECC86A 0%, #D4962A 50%, #B87620 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  font-weight: 500;
+}
+
+.gold-line {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--g300), transparent);
+  opacity: 0.6;
+}
+
+.glass {
+  background: rgba(13, 12, 9, 0.72);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+.glass-nav {
+  background: var(--nav-glass);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+}
+
+.dropdown-glass {
+  background: var(--s1);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  box-shadow: var(--shh);
+  border: 1px solid var(--bw2);
+}
+
+[data-theme="light"] .dropdown-glass {
+  background: rgba(255, 255, 255, 0.94);
+}
+
+.btn-g {
+  background: linear-gradient(135deg, #ECC86A, #D4962A, #B87620);
+  background-size: 200% auto;
+  color: #000 !important;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border: none;
+  box-shadow: 0 4px 15px rgba(212, 150, 42, 0.2);
+  border-radius: 9999px !important;
+  cursor: pointer;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-g:hover {
+  background-position: right center;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(212, 150, 42, 0.35);
+  filter: brightness(1.1);
+}
+
+.btn-g::after {
+  content: '';
+  position: absolute;
+  top: -100px;
+  left: -100px;
+  width: 50px;
+  height: 300px;
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(45deg);
+  transition: all 0.7s;
+  animation: shimmer-btn 4s infinite;
+}
+
+@keyframes shimmer-btn {
+  0% {
+    transform: translate(-100px, -100px) rotate(45deg);
+  }
+
+  20% {
+    transform: translate(400px, 400px) rotate(45deg);
+  }
+
+  100% {
+    transform: translate(400px, 400px) rotate(45deg);
+  }
+}
+
+.btn-o {
+  background: var(--bw1);
+  border: 1.5px solid var(--bw3);
+  color: var(--t1);
+  transition: all 0.4s ease;
+  backdrop-filter: blur(8px);
+  border-radius: 9999px !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-o:hover {
+  background: var(--g300);
+  color: #000 !important;
+  border-color: var(--g300);
+  box-shadow: var(--shg);
+}
+
+.premium-title {
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.f-label {
+  display: block;
+  text-transform: uppercase;
+  font-weight: 900;
+  letter-spacing: 0.22em;
+  font-size: 0.62rem;
+  color: var(--t3);
+  margin-bottom: 0.75rem;
+  padding-left: 0.25rem;
+}
+
+.f-input {
+  width: 100%;
+  background: var(--bw1);
+  border: 1px solid var(--bw2);
+  border-radius: 9999px !important;
+  color: var(--t1);
+  padding: 0.85rem 1.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.f-input:focus {
+  border-color: var(--g300);
+  background: var(--s2);
+  box-shadow: 0 0 0 1px var(--g300);
+}
+
+.f-input::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.logo-shimmer {
+  transition: all 0.5s ease;
+}
+
+.logo-shimmer:hover {
+  filter: drop-shadow(0 0 15px var(--g200));
+}
+
+/* ═══════════════════════════════════════════════
+   ACTIVITY CARDS & HOVER EFFECTS
+   ═══════════════════════════════════════════════ */
+.activity-card {
+  background: var(--s1);
+  border: 1px solid var(--bw1);
+  transition: all 0.55s cubic-bezier(0.23, 1, 0.32, 1);
+  position: relative;
+  z-index: 1;
+}
+
+.activity-card:hover {
+  transform: translateY(-12px);
+  border-color: var(--g300);
+  box-shadow: 0 32px 64px -16px rgba(0, 0, 0, 0.8), 0 0 24px rgba(212, 150, 42, 0.12);
+  z-index: 10;
+}
+
+.activity-card .card-img {
+  transition: transform 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.activity-card:hover .card-img {
+  transform: scale(1.12);
+}
+
+.luxury-combo-glow {
+  box-shadow: 0 0 40px rgba(212, 150, 42, 0.2), inset 0 0 20px rgba(212, 150, 42, 0.1) !important;
+  border-color: rgba(212, 150, 42, 0.5) !important;
+}
+
+.card-expanded {
+  transform: scale(1.02);
+  border-color: var(--g300);
+  box-shadow: var(--shh);
+}
+
+.badge-gold {
+  background: linear-gradient(135deg, var(--g400), var(--g200));
+  color: #000;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 0.62rem;
+  box-shadow: 0 4px 12px rgba(212, 150, 42, 0.3);
+}
+
+.badge-save {
+  background: #E11D48;
+  color: #fff;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 0.58rem;
+  box-shadow: 0 4px 10px rgba(225, 29, 72, 0.3);
+}
+
+/* ═══════════════════════════════════════════════
+   LIGHT THEME OVERRIDES
+═══════════════════════════════════════════════ */
+[data-theme="light"] {
+  --s0: #FFFFFF;
+  --s1: #F8F6F0;
+  --s2: #F2EEDF;
+  --s3: #EAE4CF;
+  --s4: #E2DBD6;
+  --s5: #DAD3CC;
+
+  --t1: rgba(18, 14, 8, 0.96);
+  --t2: rgba(18, 14, 8, 0.80);
+  --t3: rgba(18, 14, 8, 0.62);
+  --t4: rgba(18, 14, 8, 0.45);
+  --t5: rgba(18, 14, 8, 0.25);
+
+  --bw1: rgba(0, 0, 0, 0.04);
+  --bw2: rgba(0, 0, 0, 0.08);
+  --bw3: rgba(0, 0, 0, 0.15);
+  --bw4: rgba(0, 0, 0, 0.02);
+  --bw5: rgba(0, 0, 0, 0.01);
+  --overlay-opacity: 0.45;
+  --nav-glass: rgba(255, 255, 255, 0.85);
+
+  --shc: 0 4px 20px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+  --shh: 0 32px 80px rgba(0, 0, 0, 0.12), 0 12px 28px rgba(0, 0, 0, 0.08);
+  --shg: 0 0 40px rgba(212, 150, 42, 0.18), 0 4px 16px rgba(212, 150, 42, 0.12);
+  --calendar-invert: none;
+}
+
+[data-theme="light"] .glass {
+  background: rgba(250, 248, 243, 0.90);
+  border: 1px solid rgba(212, 150, 42, 0.20);
+}
+
+[data-theme="light"] .glass-nav {
+  background: rgba(250, 248, 243, 0.95);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .activity-card {
+  background: var(--s2);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* ─── Light mode text overrides (Safely removed !important) ─── */
+[data-theme="light"] .text-white {
+  color: var(--t1);
+}
+
+[data-theme="light"] .text-white\/90 {
+  color: var(--t1);
+}
+
+[data-theme="light"] .text-white\/80 {
+  color: var(--t2);
+}
+
+[data-theme="light"] .text-white\/70 {
+  color: var(--t2);
+}
+
+[data-theme="light"] .text-white\/60 {
+  color: var(--t3);
+}
+
+[data-theme="light"] .text-white\/50 {
+  color: var(--t3);
+}
+
+[data-theme="light"] .text-white\/40 {
+  color: var(--t4);
+}
+
+/* ─── Forced Dark Context (Premium Visibility) ─── */
+.theme-force-dark,
+.theme-force-dark * {
+  --t1: rgba(255, 255, 255, 0.98) !important;
+  --t2: rgba(255, 255, 255, 0.85) !important;
+  --t3: rgba(255, 255, 255, 0.70) !important;
+  --t4: rgba(255, 255, 255, 0.50) !important;
+}
+
+.theme-force-dark .text-white {
+  color: white !important;
+}
+
+/* ═══════════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════════ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--fb);
+  background: var(--s0);
+  color: var(--t1);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--s0);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--g400);
+  border-radius: 99px;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 3px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--g400);
+  border-radius: 99px;
+}
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--g400) transparent;
+}
+
+/* ═══════════════════════════════════════════════
+   ANIMATIONS & TRANSITIONS
+═══════════════════════════════════════════════ */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.88);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.a-in {
+  animation: fadeIn 0.4s ease both;
+}
+
+.a-up {
+  animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.a-scale {
+  animation: scaleIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+::view-transition-old(root) {
+  animation: 0.35s cubic-bezier(0.4, 0, 1, 1) both fade-out,
+    0.35s cubic-bezier(0.4, 0, 0.2, 1) both scale-down;
+}
+
+::view-transition-new(root) {
+  animation: 0.5s cubic-bezier(0.4, 0, 1, 1) both fade-in,
+    0.5s cubic-bezier(0.4, 0, 0.2, 1) both scale-up;
+}
+
+@keyframes scale-down {
+  to {
+    transform: scale(0.96);
+  }
+}
+
+@keyframes scale-up {
+  from {
+    transform: scale(1.04);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   RTL REFINEMENTS
+═══════════════════════════════════════════════ */
+[dir="rtl"] {
+  text-align: right;
+}
+
+[dir="rtl"] .cinematic-search input {
+  padding-right: 4rem !important;
+  padding-left: 1.5rem !important;
+  text-align: right !important;
+}
+
+[dir="rtl"] .cinematic-search svg {
+  right: 1.2rem !important;
+  left: auto !important;
+}
+
+/* ═══════════════════════════════════════════════
+   GOOGLE TRANSLATE - HIDE UI
+   We hide Google's injected UI but keep the widget functional.
+   The .goog-te-combo select element must remain in the DOM.
+═══════════════════════════════════════════════ */
+.goog-te-banner-frame,
+#goog-gt-tt,
+.goog-te-balloon-frame,
+.goog-tooltip,
+.goog-tooltip:hover {
+  display: none !important;
+}
+
+.goog-logo-link {
+  display: none !important;
+}
+
+.goog-te-gadget {
+  color: transparent !important;
+  font-size: 0 !important;
+}
+
+.goog-text-highlight {
+  background: none !important;
+  box-shadow: none !important;
+}
+
+body {
+  top: 0 !important;
+  position: static !important;
+}
+
+#google_translate_element {
+  pointer-events: none;
+}
