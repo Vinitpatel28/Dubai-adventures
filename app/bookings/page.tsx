@@ -73,7 +73,7 @@ async function getBookingsData() {
     bookings: JSON.parse(JSON.stringify(userBookings)),
     categories: JSON.parse(JSON.stringify(categories)),
     isAuthenticated,
-    userEmail
+    userEmail: userEmail || null
   };
 }
 

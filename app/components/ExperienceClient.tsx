@@ -16,7 +16,6 @@ export default function ExperienceClient({ activity, categories }: Props) {
       <Navbar 
         hasBooking={false} 
         categories={categories} 
-        onCartClick={() => {}} 
         forceDark={false} 
       />
       <ExperienceDetail activity={activity} />

@@ -116,7 +116,6 @@ export default function HybridPackageClient({ activity: pkg, categories }: { act
       <Navbar
         hasBooking={false}
         categories={categories}
-        onCartClick={() => {}}
         onSelectCategory={(cat) => { window.location.href = `/?category=${cat}#experiences`; }}
       />
 

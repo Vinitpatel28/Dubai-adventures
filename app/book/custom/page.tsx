@@ -196,7 +196,7 @@ export default function CustomBookingPage() {
   if (confirmation) {
     return (
       <>
-        <Navbar hasBooking={false} categories={categories} onCartClick={() => {}} />
+        <Navbar hasBooking={false} categories={categories} />
         <div className="pt-24 min-h-screen bg-[var(--s0)]">
           <BookingSuccess confirmation={confirmation} onNewBooking={() => router.push("/")} />
         </div>
@@ -207,7 +207,7 @@ export default function CustomBookingPage() {
 
   return (
     <div className="min-h-screen bg-[var(--s0)]">
-      <Navbar hasBooking={false} categories={categories} onCartClick={() => {}} />
+      <Navbar hasBooking={false} categories={categories} />
       
       <main className="pt-24 pb-20 px-5 sm:px-8 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">

@@ -16,7 +16,7 @@ export default function CookiesPage() {
 
   return (
     <main className="min-h-screen bg-[var(--s0)] transition-colors duration-300">
-      <Navbar hasBooking={false} categories={categories} onCartClick={() => {}} forceDark={false} />
+      <Navbar hasBooking={false} categories={categories} forceDark={false} />
       
       {/* Hero Section */}
       <section className="pt-40 pb-20 px-6 relative overflow-hidden border-b border-[var(--bw1)]">

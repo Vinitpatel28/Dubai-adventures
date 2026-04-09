@@ -10,6 +10,9 @@ import { NextRequest } from 'next/server';
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) throw new Error('JWT_SECRET environment variable is required');
 
+// TypeScript type guard - JWT_SECRET is guaranteed to be a string after the check above
+const JWT_SECRET_SAFE = JWT_SECRET as string;
+
 export async function POST(req: Request) {
   // Rate limiting
   const nextReq = req as unknown as NextRequest;
@@ -38,7 +41,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
     }
 
-    const token = jwt.sign({ userId: user._id.toString(), email: user.email, name: user.name }, JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign({ userId: user._id.toString(), email: user.email, name: user.name }, JWT_SECRET_SAFE, { expiresIn: '7d' });
 
     const response = NextResponse.json({ message: 'Logged in', user: { id: user._id.toString(), name: user.name, email: user.email } }, { status: 200 });
     

@@ -6,18 +6,19 @@ import { applyCORS } from '@/lib/cors';
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 
-if (!stripeSecretKey) {
-  throw new Error(
-    'STRIPE_SECRET_KEY environment variable is required. ' +
-    'Please set it in your .env.local file.'
-  );
-}
-
-const stripe = new Stripe(stripeSecretKey, {
+// Initialize Stripe only if key is available
+const stripe = stripeSecretKey ? new Stripe(stripeSecretKey, {
   apiVersion: '2025-01-27' as any,
-});
+}) : null;
 
 export async function POST(req: NextRequest) {
+  // Check for required environment variable at request time
+  if (!stripeSecretKey || !stripe) {
+    return NextResponse.json(
+      { error: 'Payment service not configured' },
+      { status: 503 }
+    );
+  }
   try {
     await dbConnect();
     const { bookingId, email } = await req.json();

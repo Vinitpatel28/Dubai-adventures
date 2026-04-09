@@ -36,7 +36,7 @@ export default function CartClient({ categories = [] }: { categories: any[] }) {
 
   return (
     <main className="min-h-screen bg-[var(--s0)] text-[var(--t1)] selection:bg-[var(--g300)]/30">
-      <Navbar categories={categories} hasBooking={false} onCartClick={() => {}} forceDark={false} />
+      <Navbar categories={categories} hasBooking={false} forceDark={false} />
 
       {/* ── Header ── */}
       <header className="pt-28 pb-10 border-b border-[var(--bw1)] bg-[var(--s1)]">

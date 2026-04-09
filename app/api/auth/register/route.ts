@@ -4,11 +4,14 @@ import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
 import jwt from 'jsonwebtoken';
 import { validateEmail, validatePassword, getPasswordFeedback } from '@/lib/validation';
-import { checkRateLimitMiddleware, getClientIP } from '@/lib/rateLimit';
+import { checkRateLimitMiddleware } from '@/lib/rateLimit';
 import { NextRequest } from 'next/server';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) throw new Error('JWT_SECRET environment variable is required');
+
+// TypeScript type guard - JWT_SECRET is guaranteed to be a string after the check above
+const JWT_SECRET_SAFE = JWT_SECRET as string;
 
 export async function POST(req: Request) {
   // Rate limiting
@@ -44,7 +47,7 @@ export async function POST(req: Request) {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({ name, email, password: hashedPassword });
 
-    const token = jwt.sign({ userId: user._id.toString(), email: user.email, name: user.name }, JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign({ userId: user._id.toString(), email: user.email, name: user.name }, JWT_SECRET_SAFE, { expiresIn: '7d' });
 
     const response = NextResponse.json({ message: 'User created', user: { id: user._id.toString(), name: user.name, email: user.email } }, { status: 201 });
     

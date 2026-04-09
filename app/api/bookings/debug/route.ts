@@ -12,7 +12,7 @@ if (!JWT_SECRET) throw new Error('JWT_SECRET environment variable is required');
 // Type guard for TypeScript
 const token_secret = JWT_SECRET as string;
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
     await dbConnect();
 
@@ -30,7 +30,7 @@ export async function GET(req: Request) {
         const user = await User.findById(userId).select('email').lean();
         userEmail = (user as { email?: string } | null)?.email;
       }
-    } catch (e) {
+    } catch {
       return NextResponse.json({
         error: 'Not authenticated',
         message: 'Please log in to debug bookings'
@@ -63,7 +63,7 @@ export async function GET(req: Request) {
     }).sort({ createdAt: -1 }).select('-__v').lean();
 
     // Get sample bookings to see structure
-    const sampleBookings = await Booking.find().limit(3).lean();
+    await Booking.find().limit(3).lean();
 
     return NextResponse.json({
       currentUser: {

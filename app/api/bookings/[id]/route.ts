@@ -7,6 +7,9 @@ import { cookies } from 'next/headers';
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) throw new Error('JWT_SECRET environment variable is required');
 
+// TypeScript type guard - JWT_SECRET is guaranteed to be a string after the check above
+const JWT_SECRET_SAFE = JWT_SECRET as string;
+
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     await dbConnect();
@@ -18,7 +21,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
       if (!token) {
         return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
       }
-      const decoded = jwt.verify(token, JWT_SECRET) as any;
+      const decoded = jwt.verify(token, JWT_SECRET_SAFE) as any;
       // Handle both old tokens (id) and new tokens (userId)
       userId = decoded.userId || decoded.id;
     } catch {
