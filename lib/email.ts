@@ -1,5 +1,17 @@
 import nodemailer from 'nodemailer';
 
+// ── Validate required SMTP configuration in production ──
+if (process.env.NODE_ENV === 'production') {
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS || !process.env.SMTP_HOST) {
+    throw new Error(
+      'SMTP configuration required in production: SMTP_USER, SMTP_PASS, SMTP_HOST'
+    );
+  }
+  if (!process.env.ADMIN_EMAIL) {
+    throw new Error('ADMIN_EMAIL environment variable is required in production');
+  }
+}
+
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || 'smtp.gmail.com',
   port: parseInt(process.env.SMTP_PORT || '587'),

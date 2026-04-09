@@ -41,11 +41,13 @@ interface Booking {
 export default function BookingsClient({ 
   initialBookings = [], 
   categories = [], 
-  isAuthenticated = false 
+  isAuthenticated = false,
+  userEmail = null
 }: { 
   initialBookings: any[], 
   categories: any[], 
-  isAuthenticated: boolean 
+  isAuthenticated: boolean,
+  userEmail: string | null
 }) {
   const [bookings, setBookings] = useState<Booking[]>(initialBookings);
   const [loading, setLoading] = useState(false);
@@ -297,6 +299,22 @@ export default function BookingsClient({
             <p className="text-[0.75rem] text-[var(--t3)] max-w-xs mx-auto mb-8 leading-relaxed uppercase tracking-wider">
               No adventures recorded in your current timeline.
             </p>
+            
+            {/* Debug Info */}
+            {!isAuthenticated && (
+              <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg mx-auto max-w-md">
+                <p className="text-[0.7rem] text-red-400 font-bold uppercase tracking-wide mb-2">⚠️ Not Logged In</p>
+                <p className="text-[0.65rem] text-red-300 leading-relaxed">Please log in to view your bookings. If you created bookings as a guest, you'll need to log in with the same email address.</p>
+              </div>
+            )}
+            
+            {isAuthenticated && userEmail && (
+              <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg mx-auto max-w-md">
+                <p className="text-[0.7rem] text-blue-400 font-bold uppercase tracking-wide mb-2">🔍 Debug Info</p>
+                <p className="text-[0.65rem] text-blue-300 leading-relaxed break-all">Searching for bookings under:<br/><strong>{userEmail}</strong></p>
+              </div>
+            )}
+            
             <a href="/#experiences" className="btn-g">
               Explore Dubai <ArrowLeft size={14} className="rotate-180" />
             </a>

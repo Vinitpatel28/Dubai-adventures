@@ -8,9 +8,10 @@ import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers';
 import mongoose from 'mongoose';
 import { sendBookingNotification, sendVoucherToCustomer } from '@/lib/email';
+import { validateEmail, validatePhone, validateNumberRange } from '@/lib/validation';
 
-const JWT_SECRET = (process.env.JWT_SECRET as string) || (process.env.NODE_ENV === 'development' ? 'dev_secret' : undefined);
-if (!JWT_SECRET) throw new Error('JWT_SECRET is missing');
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) throw new Error('JWT_SECRET environment variable is required');
 
 export async function POST(req: Request) {
   try {
@@ -26,6 +27,23 @@ export async function POST(req: Request) {
 
     if (!activityId || !date || !timeSlot || !fullName || !email || !phone) {
       return NextResponse.json({ message: 'Missing required booking fields' }, { status: 400 });
+    }
+
+    // ── Input Validation ──
+    if (!validateEmail(email)) {
+      return NextResponse.json({ message: 'Invalid email format' }, { status: 400 });
+    }
+
+    if (!validatePhone(phone)) {
+      return NextResponse.json({ message: 'Invalid phone number format' }, { status: 400 });
+    }
+
+    if (!validateNumberRange(adults || 0, 1, 100)) {
+      return NextResponse.json({ message: 'Invalid number of adults' }, { status: 400 });
+    }
+
+    if (!validateNumberRange(children || 0, 0, 100)) {
+      return NextResponse.json({ message: 'Invalid number of children' }, { status: 400 });
     }
 
     // ── Server-Side Real-Time Validation ──
@@ -64,8 +82,9 @@ export async function POST(req: Request) {
     const token = cookieStore.get('token')?.value;
     if (token) {
       try {
-        const decoded = jwt.verify(token, JWT_SECRET as string) as unknown as { userId: string };
-        userId = decoded.userId;
+        const decoded = jwt.verify(token, JWT_SECRET) as any;
+        // Handle both old tokens (id) and new tokens (userId)
+        userId = decoded.userId || decoded.id;
       } catch {
         // Log the error but continue as guest if token is invalid
         console.warn('Invalid token during booking, proceeding as guest');
@@ -283,8 +302,9 @@ export async function GET(req: Request) {
       if (!token) {
         return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
       }
-      const decoded = jwt.verify(token, JWT_SECRET as string) as unknown as { userId: string };
-      userId = decoded.userId;
+      const decoded = jwt.verify(token, JWT_SECRET as string) as any;
+      // Handle both old tokens (id) and new tokens (userId)
+      userId = decoded.userId || decoded.id;
     } catch {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }

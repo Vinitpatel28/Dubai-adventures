@@ -17,13 +17,15 @@ async function getBookingsData() {
   
   let userId = null;
   let isAuthenticated = false;
+  let userEmail = null;
   
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get('token')?.value;
     if (token) {
-      const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
-      userId = decoded.userId;
+      const decoded = jwt.verify(token, JWT_SECRET) as any;
+      // Handle both old tokens (id) and new tokens (userId)
+      userId = decoded.userId || decoded.id;
       isAuthenticated = true;
     }
   } catch (e) {
@@ -35,7 +37,7 @@ async function getBookingsData() {
   if (userId) {
     const userObjectId = new mongoose.Types.ObjectId(userId);
     const user = await User.findById(userObjectId).select('email').lean();
-    const userEmail = (user as { email?: string } | null)?.email;
+    userEmail = (user as { email?: string } | null)?.email;
 
     const query = userEmail
       ? { $or: [{ userId: userObjectId }, { email: userEmail }] }
@@ -70,18 +72,20 @@ async function getBookingsData() {
   return {
     bookings: JSON.parse(JSON.stringify(userBookings)),
     categories: JSON.parse(JSON.stringify(categories)),
-    isAuthenticated
+    isAuthenticated,
+    userEmail
   };
 }
 
 export default async function BookingsPage() {
-  const { bookings, categories, isAuthenticated } = await getBookingsData();
+  const { bookings, categories, isAuthenticated, userEmail } = await getBookingsData();
 
   return (
     <BookingsClient 
       initialBookings={bookings} 
       categories={categories} 
-      isAuthenticated={isAuthenticated} 
+      isAuthenticated={isAuthenticated}
+      userEmail={userEmail}
     />
   );
 }

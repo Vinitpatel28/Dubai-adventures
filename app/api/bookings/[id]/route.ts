@@ -4,7 +4,8 @@ import Booking from '@/models/Booking';
 import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'supersecret';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) throw new Error('JWT_SECRET environment variable is required');
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -17,8 +18,9 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
       if (!token) {
         return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
       }
-      const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
-      userId = decoded.userId;
+      const decoded = jwt.verify(token, JWT_SECRET) as any;
+      // Handle both old tokens (id) and new tokens (userId)
+      userId = decoded.userId || decoded.id;
     } catch {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }

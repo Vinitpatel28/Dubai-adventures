@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
 import dbConnect from '@/lib/mongodb';
 import Media from '@/models/Media';
+import { validateFileUpload } from '@/lib/validation';
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
@@ -9,7 +10,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET!,
 });
 
-// POST /api/upload  — upload image to Cloudinary (using user credentials)
+// POST /api/upload  — upload image to Cloudinary (admin only)
 export async function POST(req: NextRequest) {
   try {
     const adminKey = req.headers.get('x-admin-key');
@@ -20,6 +21,16 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData();
     const file = formData.get('file') as File | null;
     if (!file) return NextResponse.json({ message: 'No file provided' }, { status: 400 });
+
+    // Validate file
+    const fileValidation = validateFileUpload(file, {
+      maxSize: 5 * 1024 * 1024, // 5MB
+      allowedTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+    });
+
+    if (!fileValidation.valid) {
+      return NextResponse.json({ message: fileValidation.error }, { status: 400 });
+    }
 
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
@@ -49,6 +60,6 @@ export async function POST(req: NextRequest) {
     });
   } catch (err) {
     console.error('[POST /api/upload]', err);
-    return NextResponse.json({ message: 'Upload failed' }, { status: 500 });
+    return NextResponse.json({ message: 'Upload failed. Please try again.' }, { status: 500 });
   }
 }

@@ -1,31 +1,44 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import Stripe from 'stripe';
 import dbConnect from '@/lib/mongodb';
 import Booking from '@/models/Booking';
+import { applyCORS } from '@/lib/cors';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+
+if (!stripeSecretKey) {
+  throw new Error(
+    'STRIPE_SECRET_KEY environment variable is required. ' +
+    'Please set it in your .env.local file.'
+  );
+}
+
+const stripe = new Stripe(stripeSecretKey, {
   apiVersion: '2025-01-27' as any,
 });
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     await dbConnect();
     const { bookingId, email } = await req.json();
 
     if (!bookingId) {
-      return NextResponse.json({ message: 'Booking ID is required' }, { status: 400 });
+      const response = NextResponse.json({ message: 'Booking ID is required' }, { status: 400 });
+      return applyCORS(response, req);
     }
 
     const booking = await Booking.findOne({ bookingId });
     if (!booking) {
-      return NextResponse.json({ message: 'Booking not found' }, { status: 404 });
+      const response = NextResponse.json({ message: 'Booking not found' }, { status: 404 });
+      return applyCORS(response, req);
     }
 
     // Use the price stored in DB, NEVER trust the client amount
     const amount = booking.totalPrice;
 
     if (!amount || amount < 50) { // Dubai minimums usually higher
-      return NextResponse.json({ message: 'Invalid booking amount' }, { status: 400 });
+      const response = NextResponse.json({ message: 'Invalid booking amount' }, { status: 400 });
+      return applyCORS(response, req);
     }
 
     // Create a PaymentIntent with the order amount and currency
@@ -41,12 +54,17 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json({ 
+    const response = NextResponse.json({ 
       clientSecret: paymentIntent.client_secret,
       transactionId: paymentIntent.id
     });
+    return applyCORS(response, req);
   } catch (err: any) {
     console.error('[STRIPE ERROR]', err);
-    return NextResponse.json({ message: err.message }, { status: 500 });
+    // Don't expose internal error details to client
+    const response = NextResponse.json({ 
+      message: 'Payment processing failed. Please try again or contact support.' 
+    }, { status: 500 });
+    return applyCORS(response, req);
   }
 }

@@ -4,7 +4,14 @@ import dbConnect from '@/lib/mongodb';
 import ActivityModel from '@/models/Activity';
 import AISettings from '@/models/AISettings';
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+if (!GEMINI_API_KEY) {
+  throw new Error(
+    'GEMINI_API_KEY environment variable is required. ' +
+    'Please set it in your .env.local file.'
+  );
+}
+const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
 export async function POST(req: Request) {
   try {

@@ -4,7 +4,8 @@ import dbConnect from '@/lib/mongodb';
 import Booking from '@/models/Booking';
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) throw new Error('JWT_SECRET environment variable is required');
 
 export async function POST(req: Request) {
   try {
@@ -15,12 +16,14 @@ export async function POST(req: Request) {
     const token = cookieStore.get('token')?.value;
     if (!token) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 
-    const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
+    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    // Handle both old tokens (id) and new tokens (userId)
+    const userId = decoded.userId || decoded.id;
 
     const booking = await Booking.findById(bookingId);
     if (!booking) return NextResponse.json({ message: 'Adventure not found' }, { status: 404 });
 
-    if (booking.userId?.toString() !== decoded.userId) {
+    if (booking.userId?.toString() !== userId) {
       return NextResponse.json({ message: 'Authorization error' }, { status: 403 });
     }
 
