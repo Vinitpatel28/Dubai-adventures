@@ -1,5 +1,6 @@
 import dbConnect from "@/lib/mongodb";
 import ActivityModel from "@/models/Activity";
+import CategoryModel from "@/models/Category";
 import mongoose from "mongoose";
 import HybridPackageClient from "../../components/packages/HybridPackageClient";
 import ExperienceClient from "../../components/ExperienceClient";
@@ -32,7 +33,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
 
   // Fetch parallel data
   const [categoriesDocs, activityDoc] = await Promise.all([
-    mongoose.model("Category").find({ isActive: true }).lean(),
+    CategoryModel.find({ isActive: true }).lean(),
     id.length === 24 
       ? ActivityModel.findById(id).lean() 
       : ActivityModel.findOne({ title: { $regex: new RegExp(id.replace(/-/g, ' '), 'i') } }).lean()
